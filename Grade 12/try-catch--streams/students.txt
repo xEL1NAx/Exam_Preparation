@@ -1,0 +1,6 @@
+Alice;2
+Bob;5
+Charlie;3
+INVALID LINE
+Denise;X
+Eric;4
