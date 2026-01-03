@@ -110,7 +110,7 @@ int main(void) {
     }
 }
 
-
+```
 ⸻
 
 🟩 2. Bit Manipulation
