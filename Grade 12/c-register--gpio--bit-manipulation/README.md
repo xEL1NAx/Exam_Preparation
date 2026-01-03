@@ -47,7 +47,7 @@ Set pin as INPUT
 DDRB &= ~(1 << PB5);  // PB5 = input
 
 ```
-⸻
+---
 
 1.4 Writing to an Output Pin
 
@@ -60,7 +60,7 @@ Set pin LOW
 PORTB &= ~(1 << PB5);
 
 ```
-⸻
+---
 
 1.5 Reading an Input Pin
 ```c
@@ -71,7 +71,7 @@ if (PINB & (1 << PB4)) {
 }
 
 ```
-⸻
+---
 
 1.6 Internal Pull-Up (Register Level)
 
@@ -86,7 +86,7 @@ Logic:
 	•	Not pressed → HIGH
 	•	Pressed → LOW
 
-⸻
+---
 
 1.7 Complete Register-Based GPIO Example
 ```c
@@ -111,13 +111,13 @@ int main(void) {
 }
 
 ```
-⸻
+---
 
 🟩 2. Bit Manipulation
 
 Bit manipulation is mandatory for register-level programming.
 
-⸻
+----
 
 2.1 Why Bit Manipulation?
 	•	Registers are 8-bit values
