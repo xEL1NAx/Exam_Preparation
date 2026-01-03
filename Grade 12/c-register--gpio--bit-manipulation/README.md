@@ -210,7 +210,7 @@ PORTB &= ~((1 << PB5) | (1 << PB3));
 
 ## 🟨 3. GPIO + Bit Manipulation Combined
 
-###Example: Toggle LED on Button Press
+### Example: Toggle LED on Button Press
 ```c
 if (!(PINB & (1 << PB4))) {
     PORTB ^= (1 << PB5);   // toggle LED
