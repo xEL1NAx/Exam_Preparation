@@ -115,31 +115,32 @@ int main(void) {
 
 ## 🟩 2. Bit Manipulation
 
-Bit manipulation is mandatory for register-level programming.
+Bit manipulation is **mandatory** for register-level programming.
 
 ---
 
 ## 2.1 Why Bit Manipulation?
-	•	Registers are 8-bit values
-	•	Each bit controls one hardware function
-	•	You must:
-	•	set bits
-	•	clear bits
-	•	toggle bits
-	•	check bits
+
+- Registers are **8-bit values**
+- Each bit controls **one hardware function**
+- You must be able to:
+  - set bits
+  - clear bits
+  - toggle bits
+  - check bits
 
 ---
 
 ## 2.2 Bitwise Operators
 
-Operator	Meaning
-`	`
-&	AND
-~	NOT
-^	XOR
-<<	Shift left
->>	Shift right
-
+| Operator | Meaning |
+|---------|---------|
+| `|` | OR |
+| `&` | AND |
+| `~` | NOT |
+| `^` | XOR |
+| `<<` | Shift left |
+| `>>` | Shift right |
 
 ---
 
