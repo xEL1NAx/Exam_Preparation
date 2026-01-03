@@ -76,8 +76,8 @@ if (PINB & (1 << PB4)) {
 ## 1.6 Internal Pull-Up (Register Level)
 
 ### Internal Pull-Up is enabled by:
-	1.	Pin is INPUT
-	2.	PORTx bit is set to 1
+1.	Pin is INPUT
+2.	PORTx bit is set to 1
 ```c
 DDRB &= ~(1 << PB4);   // input
 PORTB |= (1 << PB4);   // enable pull-up
