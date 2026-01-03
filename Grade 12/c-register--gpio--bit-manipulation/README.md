@@ -1,248 +1,245 @@
-# 📘 Comprehensive Study Overview: Pull-Up / Pull-Down, UML, C/Arduino, GPIO, State Machine
+# 📘 Study Overview: GPIO via Registers (without Arduino.h) & Bit Manipulation
 
 ---
 
-## 🟦 1. Pull-Up / Pull-Down Resistors
+## 🟦 1. GPIO Programming via Registers (NO Arduino.h)
 
-### 1.1 Purpose
-- Digital inputs need a **defined logic level**.  
-- Pull-Up/Pull-Down resistors stabilize the input to **HIGH or LOW** when no signal is applied.
-
-### 1.2 Pull-Up
-- Connects **pin → VCC** through a resistor  
-- Input reads **HIGH** when unpressed  
-- Button connects to **GND → LOW** when pressed
-
-### 1.3 Pull-Down
-- Connects **pin → GND** through a resistor  
-- Input reads **LOW** when unpressed  
-- Button connects to **VCC → HIGH** when pressed
-
-### 1.4 Arduino Example (internal Pull-Up)
-```c
-pinMode(2, INPUT_PULLUP); // Internal Pull-Up activated
-````
-
-* Typical resistor values (external): 4.7 kΩ – 10 kΩ
-* Arduino internal Pull-Ups available; internal Pull-Downs are **not** available
+This section covers **direct hardware access** on AVR microcontrollers  
+(e.g. ATmega328P on Arduino Uno), **without** `Arduino.h`.
 
 ---
 
-## 🟩 2. UML State Machines
-
-### 2.1 Purpose
-
-* Model system behavior
-* Useful for embedded systems, games, devices, menu navigation
-
-### 2.2 Elements
-
-| Element    | Meaning                               |
-| ---------- | ------------------------------------- |
-| State      | Specific system status                |
-| Transition | Change from one state to another      |
-| Trigger    | Event causing the transition          |
-| Guard      | Condition that must be true           |
-| Action     | Operation performed during transition |
-| Entry/Exit | Actions on entering/exiting a state   |
-
-### 2.3 Example States
-
-* `IDLE`, `WAIT`, `ACTIVE`
+## 1.1 Why use registers?
+- Faster than Arduino functions
+- Full control over hardware
+- Required for:
+  - low-level programming
+  - embedded systems exams
+  - understanding how Arduino really works
 
 ---
 
-## 🟧 3. State Machine Diagram (ASCII UML)
+## 1.2 AVR GPIO Register Overview
 
-```
- ┌──────────┐     Button Pressed      ┌──────────┐      After 200 ms      ┌────────────┐
- │   IDLE   │ ----------------------→ │   WAIT   │ ----------------------→ │   ACTIVE    │
- └────┬─────┘                         └────┬─────┘                         └──────┬─────┘
-      │                                    │                                    │
-      │ Button Released                     │ (nothing else)                     │ Button Released
-      └─────────────────────────────────────┴────────────────────────────────────┘
-                                                goes back to:
-                                                   IDLE
-```
+Each port (B, C, D) has **three important registers**:
 
-### 3.1 State Descriptions
+| Register | Purpose |
+|--------|--------|
+| `DDRx` | Data Direction Register (Input / Output) |
+| `PORTx` | Output value / Pull-Up activation |
+| `PINx` | Read input value |
 
-#### 🟩 IDLE
-
-* LED off
-* Waits for button press
-* Transition: when buttonPressed() → WAIT
-
-#### 🟨 WAIT
-
-* 200 ms stabilization time
-* Debounce & transition buffer
-* Transition: after timer done → ACTIVE
-
-#### 🟥 ACTIVE
-
-* LED blinks
-* Transition: when buttonReleased() → IDLE
-
-### 3.2 Transition Table
-
-| Current | Event          | Next   | Action         |
-| ------- | -------------- | ------ | -------------- |
-| IDLE    | ButtonPressed  | WAIT   | start timer    |
-| WAIT    | TimerDone      | ACTIVE | start blinking |
-| ACTIVE  | ButtonReleased | IDLE   | stop blinking  |
+Where `x` is:
+- `B` → Port B
+- `C` → Port C
+- `D` → Port D
 
 ---
 
-## 🟦 4. C/Arduino Programming
+## 1.3 Pin Direction (Input / Output)
 
-### 4.1 Basic Structure
+### Set pin as OUTPUT
+``
+DDRB |= (1 << PB5);   // PB5 = output
 
-```c
-#include <Arduino.h>
+Set pin as INPUT
 
-void setup() {
-  // run once
+DDRB &= ~(1 << PB5);  // PB5 = input
+
+
+⸻
+
+1.4 Writing to an Output Pin
+
+Set pin HIGH
+
+PORTB |= (1 << PB5);
+
+Set pin LOW
+
+PORTB &= ~(1 << PB5);
+
+
+⸻
+
+1.5 Reading an Input Pin
+
+if (PINB & (1 << PB4)) {
+    // Pin is HIGH
+} else {
+    // Pin is LOW
 }
 
-void loop() {
-  // run forever
-}
-```
 
-### 4.2 Functions
+⸻
 
-```c
-int sum(int a, int b) {
-  return a + b;
-}
+1.6 Internal Pull-Up (Register Level)
 
-void blink(int pin, int ms) {
-  digitalWrite(pin, HIGH);
-  delay(ms);
-  digitalWrite(pin, LOW);
-  delay(ms);
-}
-```
+Internal Pull-Up is enabled by:
+	1.	Pin is INPUT
+	2.	PORTx bit is set to 1
 
-### 4.3 Parameters & Return
+DDRB &= ~(1 << PB4);   // input
+PORTB |= (1 << PB4);   // enable pull-up
 
-* Call by value (default in C)
-* Types: int, void, float, char*, structs
+Logic:
+	•	Not pressed → HIGH
+	•	Pressed → LOW
 
-### 4.4 Divide-and-Conquer
+⸻
 
-* Split problems into smaller sub-problems
-* Solve separately
-* Combine results
+1.7 Complete Register-Based GPIO Example
 
----
+#include <avr/io.h>
 
-## 🟧 5. GPIO & Arduino.h
+int main(void) {
 
-### 5.1 Pin Modes
+    // LED on PB5
+    DDRB |= (1 << PB5);
 
-```c
-pinMode(13, OUTPUT);
-pinMode(7, INPUT_PULLUP);
-```
+    // Button on PB4 with pull-up
+    DDRB &= ~(1 << PB4);
+    PORTB |= (1 << PB4);
 
-### 5.2 Writing and Reading Pins
-
-```c
-digitalWrite(13, HIGH);
-digitalWrite(13, LOW);
-
-int state = digitalRead(7);
-```
-
-### 5.3 Example: LED controlled by Button
-
-```c
-void setup() {
-    pinMode(13, OUTPUT);
-    pinMode(7, INPUT_PULLUP);
-}
-
-void loop() {
-    if (digitalRead(7) == LOW) {
-        digitalWrite(13, HIGH);
-    } else {
-        digitalWrite(13, LOW);
+    while (1) {
+        if (!(PINB & (1 << PB4))) {
+            PORTB |= (1 << PB5);   // LED ON
+        } else {
+            PORTB &= ~(1 << PB5);  // LED OFF
+        }
     }
 }
-```
 
-### 5.4 Timers with millis()
 
-* Non-blocking delays for state transitions
+⸻
 
-```c
-unsigned long start = millis();
-if (millis() - start > 1000) { /* do something */ }
-```
+🟩 2. Bit Manipulation
 
----
+Bit manipulation is mandatory for register-level programming.
 
-## 🟨 6. State Machine Implementation in Arduino Code
+⸻
 
-```c
-switch (currentState) {
-  case IDLE:
-    digitalWrite(LED_PIN, LOW);
-    if (buttonPressed()) {
-      currentState = WAIT;
-      waitStartTime = millis();
-    }
-    break;
+2.1 Why Bit Manipulation?
+	•	Registers are 8-bit values
+	•	Each bit controls one hardware function
+	•	You must:
+	•	set bits
+	•	clear bits
+	•	toggle bits
+	•	check bits
 
-  case WAIT:
-    if (millis() - waitStartTime > 200) {
-      currentState = ACTIVE;
-    }
-    break;
+⸻
 
-  case ACTIVE:
-    blinkOnce(150);
-    if (!buttonPressed()) {
-      currentState = IDLE;
-    }
-    break;
+2.2 Bitwise Operators
+
+Operator	Meaning
+`	`
+&	AND
+~	NOT
+^	XOR
+<<	Shift left
+>>	Shift right
+
+
+⸻
+
+2.3 Setting a Bit (to 1)
+
+PORTB |= (1 << PB5);
+
+Explanation:
+	•	1 << PB5 → binary mask
+	•	OR (|=) sets only this bit
+
+⸻
+
+2.4 Clearing a Bit (to 0)
+
+PORTB &= ~(1 << PB5);
+
+Explanation:
+	•	~ inverts the mask
+	•	AND clears the bit safely
+
+⸻
+
+2.5 Toggling a Bit
+
+PORTB ^= (1 << PB5);
+
+Explanation:
+	•	XOR flips the bit
+	•	1 → 0
+	•	0 → 1
+
+⸻
+
+2.6 Reading a Bit
+
+if (PINB & (1 << PB4)) {
+    // bit is 1 (HIGH)
 }
-```
 
----
 
-## 🟪 7. Optional Advanced Topics
+⸻
 
-* **Debouncing:** `delay(25)` or RC filter
-* **PWM / ADC / I2C / SPI**
-* **Timers and millis() for non-blocking operations**
-* **Multiple modes and events**
+2.7 Bit Mask Concept
 
----
+(1 << PB4)
 
-## 🎓 Summary / Learning Goals
+Creates a binary mask like:
 
-### Pull-Up / Pull-Down
+00010000
 
-* Understand input stabilization
-* Arduino INPUT_PULLUP vs external resistors
+Used to isolate or modify a single bit.
 
-### GPIO
+⸻
 
-* pinMode / digitalWrite / digitalRead
-* Non-blocking timing
-* Debouncing
+2.8 Common Bit Manipulation Patterns
 
-### C / Arduino
+Set multiple bits
 
-* Functions, parameters, return types
-* Divide-and-Conquer logic
-* Enums & switch-case
+PORTB |= (1 << PB5) | (1 << PB3);
 
-### State Machines
+Clear multiple bits
 
-* Model states & transitions
-* Implement with switch-case and timers
-* Map UML diagrams to Arduino code
+PORTB &= ~((1 << PB5) | (1 << PB3));
+
+
+⸻
+
+🟨 3. GPIO + Bit Manipulation Combined
+
+Example: Toggle LED on Button Press
+
+if (!(PINB & (1 << PB4))) {
+    PORTB ^= (1 << PB5);   // toggle LED
+}
+
+
+⸻
+
+🟥 4. Typical Errors (IMPORTANT)
+
+Error	Explanation
+Using = instead of `	=`
+Forgetting ~ when clearing	Clears wrong bits
+Not setting DDR	Pin does nothing
+Floating input	No pull-up or pull-down
+
+
+⸻
+
+🎓 Summary / Learning Goals
+
+GPIO Registers
+	•	Understand DDRx, PORTx, PINx
+	•	Configure input/output
+	•	Enable internal pull-ups
+	•	Read and write pins directly
+
+Bit Manipulation
+	•	Use masks correctly
+	•	Set, clear, toggle bits safely
+	•	Combine multiple bit operations
+	•	Avoid register overwrite bugs
