@@ -1,9 +1,3 @@
-Perfect — here is exactly the same style as before, but only for the two requested topics, as a complete Markdown study overview.
-You can paste this directly into a .md file.
-
-⸻
-
-
 # 📘 Study Overview: GPIO via Registers (without Arduino.h) & Bit Manipulation
 
 ---
