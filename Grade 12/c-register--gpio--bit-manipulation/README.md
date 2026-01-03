@@ -146,72 +146,85 @@ Bit manipulation is **mandatory** for register-level programming.
 
 ## 2.3 Setting a Bit (to 1)
 
+```c
 PORTB |= (1 << PB5);
+```
 
-Explanation:
-	•	1 << PB5 → binary mask
-	•	OR (|=) sets only this bit
+**Explanation:**
+- `1 << PB5` → creates a binary mask
+- OR (`|=`) sets **only this bit** without affecting others
 
 ---
 
 ## 2.4 Clearing a Bit (to 0)
 
+```c
 PORTB &= ~(1 << PB5);
+```
 
-Explanation:
-	•	~ inverts the mask
-	•	AND clears the bit safely
+**Explanation:**
+- `~` inverts the mask
+- AND (`&=`) clears the bit safely
 
 ---
 
 ## 2.5 Toggling a Bit
 
+```c
 PORTB ^= (1 << PB5);
+```
 
-Explanation:
-	•	XOR flips the bit
-	•	1 → 0
-	•	0 → 1
+**Explanation:**
+- XOR flips the bit
+- `1 → 0`
+- `0 → 1`
 
 ---
 
 ## 2.6 Reading a Bit
 
+```c
 if (PINB & (1 << PB4)) {
     // bit is 1 (HIGH)
 }
-
+```
 
 ---
 
 ## 2.7 Bit Mask Concept
 
+```c
 (1 << PB4)
+```
 
 Creates a binary mask like:
 
+```
 00010000
+```
 
-Used to isolate or modify a single bit.
+Used to isolate or modify a **single bit**.
 
 ---
 
 ## 2.8 Common Bit Manipulation Patterns
 
-Set multiple bits
-
+### Set multiple bits
+```c
 PORTB |= (1 << PB5) | (1 << PB3);
+```
 
-Clear multiple bits
-
+### Clear multiple bits
+```c
 PORTB &= ~((1 << PB5) | (1 << PB3));
-
+```
 
 ---
 
 ## 🟨 3. GPIO + Bit Manipulation Combined
 
 ### Example: Toggle LED on Button Press
+
 ```c
 if (!(PINB & (1 << PB4))) {
     PORTB ^= (1 << PB5);   // toggle LED
@@ -222,25 +235,25 @@ if (!(PINB & (1 << PB4))) {
 
 ## 🟥 4. Typical Errors (IMPORTANT)
 
-Error	Explanation
-Using = instead of `=`
-Forgetting ~ when clearing	Clears wrong bits
-Not setting DDR	Pin does nothing
-Floating input	No pull-up or pull-down
-
+| Error | Explanation |
+|------|------------|
+| Using `=` instead of `|=` or `&=` | Overwrites the entire register |
+| Forgetting `~` when clearing | Clears the wrong bits |
+| Not setting `DDRx` | Pin does nothing |
+| Floating input | No pull-up or pull-down |
 
 ---
 
 ## 🎓 Summary / Learning Goals
 
-GPIO Registers
-	•	Understand DDRx, PORTx, PINx
-	•	Configure input/output
-	•	Enable internal pull-ups
-	•	Read and write pins directly
+### GPIO Registers
+- Understand `DDRx`, `PORTx`, `PINx`
+- Configure input/output
+- Enable internal pull-ups
+- Read and write pins directly
 
-Bit Manipulation
-	•	Use masks correctly
-	•	Set, clear, toggle bits safely
-	•	Combine multiple bit operations
-	•	Avoid register overwrite bugs
+### Bit Manipulation
+- Use masks correctly
+- Set, clear, toggle bits safely
+- Combine multiple bit operations
+- Avoid register overwrite bugs
