@@ -41,9 +41,9 @@ Where `x` is:
 ### Set pin as OUTPUT
 ```c
 DDRB |= (1 << PB5);   // PB5 = output
-
+```
 Set pin as INPUT
-
+```c
 DDRB &= ~(1 << PB5);  // PB5 = input
 
 ```
