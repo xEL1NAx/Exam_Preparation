@@ -42,27 +42,27 @@ Where `x` is:
 ```c
 DDRB |= (1 << PB5);   // PB5 = output
 ```
-Set pin as INPUT
+### Set pin as INPUT
 ```c
 DDRB &= ~(1 << PB5);  // PB5 = input
 
 ```
 ---
 
-1.4 Writing to an Output Pin
+## 1.4 Writing to an Output Pin
 
-Set pin HIGH
+### Set pin HIGH
 ```c
 PORTB |= (1 << PB5);
 ```
-Set pin LOW
+### Set pin LOW
 ```c
 PORTB &= ~(1 << PB5);
 
 ```
 ---
 
-1.5 Reading an Input Pin
+## 1.5 Reading an Input Pin
 ```c
 if (PINB & (1 << PB4)) {
     // Pin is HIGH
@@ -73,22 +73,22 @@ if (PINB & (1 << PB4)) {
 ```
 ---
 
-1.6 Internal Pull-Up (Register Level)
+## 1.6 Internal Pull-Up (Register Level)
 
-Internal Pull-Up is enabled by:
+### Internal Pull-Up is enabled by:
 	1.	Pin is INPUT
 	2.	PORTx bit is set to 1
 ```c
 DDRB &= ~(1 << PB4);   // input
 PORTB |= (1 << PB4);   // enable pull-up
 ```
-Logic:
+### Logic:
 	•	Not pressed → HIGH
 	•	Pressed → LOW
 
 ---
 
-1.7 Complete Register-Based GPIO Example
+## 1.7 Complete Register-Based GPIO Example
 ```c
 #include <avr/io.h>
 
@@ -113,7 +113,7 @@ int main(void) {
 ```
 ---
 
-🟩 2. Bit Manipulation
+## 🟩 2. Bit Manipulation
 
 Bit manipulation is mandatory for register-level programming.
 
