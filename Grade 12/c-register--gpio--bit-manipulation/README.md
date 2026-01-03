@@ -111,13 +111,13 @@ int main(void) {
 }
 
 ```
-----
+---
 
 ## 🟩 2. Bit Manipulation
 
 Bit manipulation is mandatory for register-level programming.
 
-----
+---
 
 ## 2.1 Why Bit Manipulation?
 	•	Registers are 8-bit values
@@ -206,29 +206,29 @@ Clear multiple bits
 PORTB &= ~((1 << PB5) | (1 << PB3));
 
 
-----
+---
 
 ## 🟨 3. GPIO + Bit Manipulation Combined
 
-Example: Toggle LED on Button Press
-
+###Example: Toggle LED on Button Press
+```c
 if (!(PINB & (1 << PB4))) {
     PORTB ^= (1 << PB5);   // toggle LED
 }
+```
 
-
-----
+---
 
 ## 🟥 4. Typical Errors (IMPORTANT)
 
 Error	Explanation
-Using = instead of `	=`
+Using = instead of `=`
 Forgetting ~ when clearing	Clears wrong bits
 Not setting DDR	Pin does nothing
 Floating input	No pull-up or pull-down
 
 
-----
+---
 
 ## 🎓 Summary / Learning Goals
 
