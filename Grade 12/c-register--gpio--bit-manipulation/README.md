@@ -48,22 +48,22 @@ DDRB &= ~(1 << PB5);  // PB5 = input
 
 ```
 ⸻
-```c
+
 1.4 Writing to an Output Pin
 
 Set pin HIGH
-
+```c
 PORTB |= (1 << PB5);
-
+```
 Set pin LOW
-
+```c
 PORTB &= ~(1 << PB5);
 
 ```
 ⸻
-```c
-1.5 Reading an Input Pin
 
+1.5 Reading an Input Pin
+```c
 if (PINB & (1 << PB4)) {
     // Pin is HIGH
 } else {
@@ -72,24 +72,24 @@ if (PINB & (1 << PB4)) {
 
 ```
 ⸻
-```c
+
 1.6 Internal Pull-Up (Register Level)
 
 Internal Pull-Up is enabled by:
 	1.	Pin is INPUT
 	2.	PORTx bit is set to 1
-
+```c
 DDRB &= ~(1 << PB4);   // input
 PORTB |= (1 << PB4);   // enable pull-up
-
+```
 Logic:
 	•	Not pressed → HIGH
 	•	Pressed → LOW
-```
-⸻
-```c
-1.7 Complete Register-Based GPIO Example
 
+⸻
+
+1.7 Complete Register-Based GPIO Example
+```c
 #include <avr/io.h>
 
 int main(void) {
