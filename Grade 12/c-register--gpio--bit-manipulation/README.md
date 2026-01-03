@@ -111,7 +111,7 @@ int main(void) {
 }
 
 ```
----
+----
 
 ## 🟩 2. Bit Manipulation
 
@@ -119,7 +119,7 @@ Bit manipulation is mandatory for register-level programming.
 
 ----
 
-2.1 Why Bit Manipulation?
+## 2.1 Why Bit Manipulation?
 	•	Registers are 8-bit values
 	•	Each bit controls one hardware function
 	•	You must:
@@ -128,9 +128,9 @@ Bit manipulation is mandatory for register-level programming.
 	•	toggle bits
 	•	check bits
 
-⸻
+---
 
-2.2 Bitwise Operators
+## 2.2 Bitwise Operators
 
 Operator	Meaning
 `	`
@@ -141,9 +141,9 @@ Operator	Meaning
 >>	Shift right
 
 
-⸻
+---
 
-2.3 Setting a Bit (to 1)
+## 2.3 Setting a Bit (to 1)
 
 PORTB |= (1 << PB5);
 
@@ -151,9 +151,9 @@ Explanation:
 	•	1 << PB5 → binary mask
 	•	OR (|=) sets only this bit
 
-⸻
+---
 
-2.4 Clearing a Bit (to 0)
+## 2.4 Clearing a Bit (to 0)
 
 PORTB &= ~(1 << PB5);
 
@@ -161,9 +161,9 @@ Explanation:
 	•	~ inverts the mask
 	•	AND clears the bit safely
 
-⸻
+---
 
-2.5 Toggling a Bit
+## 2.5 Toggling a Bit
 
 PORTB ^= (1 << PB5);
 
@@ -172,18 +172,18 @@ Explanation:
 	•	1 → 0
 	•	0 → 1
 
-⸻
+---
 
-2.6 Reading a Bit
+## 2.6 Reading a Bit
 
 if (PINB & (1 << PB4)) {
     // bit is 1 (HIGH)
 }
 
 
-⸻
+---
 
-2.7 Bit Mask Concept
+## 2.7 Bit Mask Concept
 
 (1 << PB4)
 
@@ -193,9 +193,9 @@ Creates a binary mask like:
 
 Used to isolate or modify a single bit.
 
-⸻
+---
 
-2.8 Common Bit Manipulation Patterns
+## 2.8 Common Bit Manipulation Patterns
 
 Set multiple bits
 
@@ -206,9 +206,9 @@ Clear multiple bits
 PORTB &= ~((1 << PB5) | (1 << PB3));
 
 
-⸻
+----
 
-🟨 3. GPIO + Bit Manipulation Combined
+## 🟨 3. GPIO + Bit Manipulation Combined
 
 Example: Toggle LED on Button Press
 
@@ -217,9 +217,9 @@ if (!(PINB & (1 << PB4))) {
 }
 
 
-⸻
+----
 
-🟥 4. Typical Errors (IMPORTANT)
+## 🟥 4. Typical Errors (IMPORTANT)
 
 Error	Explanation
 Using = instead of `	=`
@@ -228,9 +228,9 @@ Not setting DDR	Pin does nothing
 Floating input	No pull-up or pull-down
 
 
-⸻
+----
 
-🎓 Summary / Learning Goals
+## 🎓 Summary / Learning Goals
 
 GPIO Registers
 	•	Understand DDRx, PORTx, PINx
