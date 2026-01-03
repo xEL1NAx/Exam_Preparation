@@ -83,8 +83,8 @@ DDRB &= ~(1 << PB4);   // input
 PORTB |= (1 << PB4);   // enable pull-up
 ```
 ### Logic:
-	•	Not pressed → HIGH
-	•	Pressed → LOW
+- Not pressed → HIGH
+- Pressed → LOW
 
 ---
 
