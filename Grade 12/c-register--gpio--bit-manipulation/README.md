@@ -1,4 +1,4 @@
-# 📘 Study Overview: GPIO via Registers (without Arduino.h) & Bit Manipulation
+# 📘 Study Overview: GPIO via Registers (without Arduino.h), Bit Manipulation & Interrupts
 
 ---
 
@@ -42,11 +42,12 @@ Where `x` is:
 ```c
 DDRB |= (1 << PB5);   // PB5 = output
 ```
+
 ### Set pin as INPUT
 ```c
 DDRB &= ~(1 << PB5);  // PB5 = input
-
 ```
+
 ---
 
 ## 1.4 Writing to an Output Pin
@@ -55,11 +56,12 @@ DDRB &= ~(1 << PB5);  // PB5 = input
 ```c
 PORTB |= (1 << PB5);
 ```
+
 ### Set pin LOW
 ```c
 PORTB &= ~(1 << PB5);
-
 ```
+
 ---
 
 ## 1.5 Reading an Input Pin
@@ -69,20 +71,22 @@ if (PINB & (1 << PB4)) {
 } else {
     // Pin is LOW
 }
-
 ```
+
 ---
 
 ## 1.6 Internal Pull-Up (Register Level)
 
 ### Internal Pull-Up is enabled by:
-1.	Pin is INPUT
-2.	PORTx bit is set to 1
+1. Pin is INPUT
+2. PORTx bit is set to 1
+
 ```c
 DDRB &= ~(1 << PB4);   // input
 PORTB |= (1 << PB4);   // enable pull-up
 ```
-### Logic:
+
+**Logic:**
 - Not pressed → HIGH
 - Pressed → LOW
 
@@ -109,8 +113,8 @@ int main(void) {
         }
     }
 }
-
 ```
+
 ---
 
 ## 🟩 2. Bit Manipulation
@@ -120,14 +124,13 @@ Bit manipulation is **mandatory** for register-level programming.
 ---
 
 ## 2.1 Why Bit Manipulation?
-
 - Registers are **8-bit values**
 - Each bit controls **one hardware function**
-- You must be able to:
+- Needed to:
   - set bits
   - clear bits
   - toggle bits
-  - check bits
+  - read bits safely
 
 ---
 
@@ -145,65 +148,44 @@ Bit manipulation is **mandatory** for register-level programming.
 ---
 
 ## 2.3 Setting a Bit (to 1)
-
 ```c
 PORTB |= (1 << PB5);
 ```
 
-**Explanation:**
-- `1 << PB5` → creates a binary mask
-- OR (`|=`) sets **only this bit** without affecting others
-
 ---
 
 ## 2.4 Clearing a Bit (to 0)
-
 ```c
 PORTB &= ~(1 << PB5);
 ```
 
-**Explanation:**
-- `~` inverts the mask
-- AND (`&=`) clears the bit safely
-
 ---
 
 ## 2.5 Toggling a Bit
-
 ```c
 PORTB ^= (1 << PB5);
 ```
 
-**Explanation:**
-- XOR flips the bit
-- `1 → 0`
-- `0 → 1`
-
 ---
 
 ## 2.6 Reading a Bit
-
 ```c
 if (PINB & (1 << PB4)) {
-    // bit is 1 (HIGH)
+    // bit is HIGH
 }
 ```
 
 ---
 
 ## 2.7 Bit Mask Concept
-
 ```c
 (1 << PB4)
 ```
 
-Creates a binary mask like:
-
+Creates:
 ```
 00010000
 ```
-
-Used to isolate or modify a **single bit**.
 
 ---
 
@@ -223,37 +205,146 @@ PORTB &= ~((1 << PB5) | (1 << PB3));
 
 ## 🟨 3. GPIO + Bit Manipulation Combined
 
-### Example: Toggle LED on Button Press
-
+### Toggle LED on Button Press
 ```c
 if (!(PINB & (1 << PB4))) {
-    PORTB ^= (1 << PB5);   // toggle LED
+    PORTB ^= (1 << PB5);
 }
 ```
 
 ---
 
-## 🟥 4. Typical Errors (IMPORTANT)
+## 🟧 4. Interrupts (External Interrupt INT0)
 
-| Error | Explanation |
-|------|------------|
-| Using `=` instead of `|=` or `&=` | Overwrites the entire register |
-| Forgetting `~` when clearing | Clears the wrong bits |
-| Not setting `DDRx` | Pin does nothing |
-| Floating input | No pull-up or pull-down |
+Interrupts allow the MCU to **react immediately** to events  
+without polling in the main loop.
 
 ---
 
-## 🎓 Summary / Learning Goals
+## 4.1 Required Header Files
+```c
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+```
 
-### GPIO Registers
-- Understand `DDRx`, `PORTx`, `PINx`
-- Configure input/output
-- Enable internal pull-ups
-- Read and write pins directly
+---
+
+## 4.2 Interrupt Service Routine (ISR)
+
+- Runs **automatically**
+- Interrupts main program execution
+- Must be **short and efficient**
+
+```c
+ISR(INT0_vect) {
+    PORTB |= (1 << PB5);   // LED ON
+    _delay_ms(5000);       // stay ON for 5 seconds
+}
+```
+
+---
+
+## 4.3 Interrupt Setup Explanation
+
+### Configure LED pin
+```c
+DDRB |= (1 << PB5);
+```
+
+### Configure Button pin (INT0 = PD2)
+```c
+DDRD &= ~(1 << PD2);   // input
+PORTD &= ~(1 << PD2);  // no pull-up
+```
+
+### Configure interrupt trigger (rising edge)
+```c
+EICRA |= (1 << ISC01) | (1 << ISC00);
+```
+
+### Enable INT0
+```c
+EIMSK |= (1 << INT0);
+```
+
+### Enable global interrupts
+```c
+sei();
+```
+
+---
+
+## 4.4 Complete Interrupt Example (Register-Level)
+
+```c
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+// --- INTERRUPT FUNCTION ---
+ISR(INT0_vect) {
+    PORTB |= (1 << PB5);   // LED ON
+    _delay_ms(5000);       // keep LED ON for 5 seconds
+}
+
+void setup() {
+    // LED as output
+    DDRB |= (1 << PB5);
+
+    // Button as input (INT0 = PD2)
+    DDRD &= ~(1 << PD2);
+    PORTD &= ~(1 << PD2);
+
+    // Rising edge on INT0
+    EICRA |= (1 << ISC01) | (1 << ISC00);
+    EIMSK |= (1 << INT0);
+
+    sei(); // global interrupts ON
+}
+
+int main() {
+    setup();
+
+    while (1) {
+        // Normal LED blinking
+        PORTB |= (1 << PB5);
+        _delay_ms(300);
+        PORTB &= ~(1 << PB5);
+        _delay_ms(300);
+    }
+}
+```
+
+---
+
+## 🟥 5. Typical Errors (IMPORTANT)
+
+| Error | Explanation |
+|------|------------|
+| Using `=` instead of `|=` or `&=` | Overwrites register |
+| Forgetting `DDRx` | Pin does nothing |
+| Blocking code in ISR | Freezes system |
+| Floating input | Random triggers |
+| Forgetting `sei()` | Interrupt never fires |
+
+---
+
+## 🎓 Final Learning Goals
+
+### GPIO
+- Use `DDRx`, `PORTx`, `PINx`
+- Configure inputs/outputs
+- Enable pull-ups
+- Read hardware directly
 
 ### Bit Manipulation
-- Use masks correctly
-- Set, clear, toggle bits safely
-- Combine multiple bit operations
-- Avoid register overwrite bugs
+- Masks and bitwise operators
+- Safe register access
+- Multi-bit operations
+
+### Interrupts
+- Understand ISR concept
+- Configure INT0
+- Use global interrupts
+- Combine interrupts with main loop
