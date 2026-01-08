@@ -245,34 +245,61 @@ ISR(INT0_vect) {
 
 ---
 
-## 4.3 Interrupt Setup Explanation
+## 4.3 Interrupt Trigger Modes (INT0)
 
-### Configure LED pin
+External interrupts on INT0 can be triggered in **four different ways**, configured via `EICRA`.
+
+---
+
+### Low Level Trigger
+Interrupt fires as long as the pin is LOW.
+
 ```c
-DDRB |= (1 << PB5);
+EICRA &= ~((1 << ISC01) | (1 << ISC00));
 ```
 
-### Configure Button pin (INT0 = PD2)
+---
+
+### Any Logical Change
+Interrupt fires on **both rising and falling edges**.
+
 ```c
-DDRD &= ~(1 << PD2);   // input
-PORTD &= ~(1 << PD2);  // no pull-up
+EICRA &= ~(1 << ISC01);
+EICRA |=  (1 << ISC00);
 ```
 
-### Configure interrupt trigger (rising edge)
+---
+
+### Falling Edge
+Interrupt fires when signal changes from HIGH → LOW.
+
+```c
+EICRA |=  (1 << ISC01);
+EICRA &= ~(1 << ISC00);
+```
+
+---
+
+### Rising Edge
+Interrupt fires when signal changes from LOW → HIGH.
+
 ```c
 EICRA |= (1 << ISC01) | (1 << ISC00);
 ```
 
-### Enable INT0
+---
+
+### Enable INT0 (required for all modes)
 ```c
 EIMSK |= (1 << INT0);
 ```
 
-### Enable global interrupts
+---
+
+### Enable Global Interrupts
 ```c
 sei();
 ```
-
 ---
 
 ## 4.4 Complete Interrupt Example (Register-Level)
